@@ -8,7 +8,7 @@ export default defineConfig({
     tailwindcss()
   ],
   build:{
-    outDir:"C:\\Users\\pc\\Local Sites\\cyduetedupk\\app\\public\\",
+    outDir:"dist",
     assetsDir:"assets",
     rollupOptions:{
       output: {

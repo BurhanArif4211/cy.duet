@@ -319,72 +319,139 @@
   {/if}
   
   <style>
-    /* WordPress content styling */
-    .prose {
-      color: #374151;
-      line-height: 1.7;
-    }
-    
-    .prose h2 {
-      font-size: 1.5em;
-      font-weight: 700;
-      margin-top: 2em;
-      margin-bottom: 1em;
-      color: #1f2937;
-    }
-    
-    .prose h3 {
-      font-size: 1.25em;
-      font-weight: 600;
-      margin-top: 1.6em;
-      margin-bottom: 0.8em;
-      color: #1f2937;
-    }
-    
-    .prose p {
-      margin-bottom: 1.25em;
-    }
-    
-    .prose a {
-      color: #7c3aed;
-      text-decoration: underline;
-    }
-    
-    .prose a:hover {
-      color: #5b21b6;
-    }
-    
-    .prose ul, .prose ol {
-      margin-bottom: 1.25em;
-      padding-left: 1.625em;
-    }
-    
-    .prose li {
-      margin-bottom: 0.5em;
-    }
-    
-    .prose blockquote {
-      border-left: 4px solid #7c3aed;
-      padding-left: 1em;
-      font-style: italic;
-      margin: 1.5em 0;
-    }
-    
-    .prose figure {
-      margin: 1.5em 0;
-    }
-    
-    .prose img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 0.5rem;
-    }
-    
-    .prose iframe {
-      width: 100%;
-      border-radius: 0.5rem;
-    }
-    
+    /* src/styles/wordpress-content.css */
+/* Reset Tailwind's preflight for WordPress content areas */
+.prose :global {
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    line-height: 1.3;
+  }
+  
+  h1 { font-size: 2.25em; }
+  h2 { font-size: 1.875em; }
+  h3 { font-size: 1.5em; }
+  h4 { font-size: 1.25em; }
+  h5 { font-size: 1.125em; }
+  h6 { font-size: 1em; }
+  
+  /* Paragraphs */
+  p {
+    margin-bottom: 1.5em;
+    line-height: 1.7;
+  }
+  
+  /* Links */
+  a {
+    color: #7c3aed;
+    text-decoration: underline;
+  }
+  
+  a:hover {
+    color: #5b21b6;
+  }
+  
+  /* Lists */
+  ul, ol {
+    margin-bottom: 1.5em;
+    padding-left: 1.625em;
+
+  }
+  ul{
+    list-style-type: disc;
+
+}  
+  li {
+    margin-bottom: 0.5em;
+  }
+  
+  /* Blockquotes */
+  blockquote {
+    border-left: 4px solid #7c3aed;
+    padding-left: 1em;
+    font-style: italic;
+    margin: 1.5em 0;
+    background-color: #faf5ff;
+    padding: 1.5em;
+    border-radius: 0.5rem;
+  }
+  
+  /* Images */
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+  
+  /* Code */
+  code {
+    background-color: #f3f4f6;
+    padding: 0.125em 0.25em;
+    border-radius: 0.25rem;
+    font-family: monospace;
+  }
+  
+  pre {
+    background-color: #1f2937;
+    color: white;
+    padding: 1em;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+  }
+  
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5em;
+  }
+  
+  th, td {
+    padding: 0.75em;
+    border: 1px solid #e5e7eb;
+  }
+  
+  th {
+    background-color: #f9fafb;
+    font-weight: 600;
+  }
+  
+  /* WordPress-specific blocks */
+  .wp-block-embed {
+    margin: 1.5em 0;
+  }
+  
+  .wp-block-image {
+    margin: 1.5em 0;
+  }
+  
+  .wp-block-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    margin: 1.5em 0;
+  }
+  
+  .wp-block-button {
+    margin: 1.5em 0;
+  }
+  
+  .wp-block-button__link {
+    display: inline-block;
+    background-color: #7c3aed;
+    color: white;
+    padding: 0.75em 1.5em;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  .wp-block-button__link:hover {
+    background-color: #5b21b6;
+  }
+}
     .line-clamp-2 {
       display: -webkit-box;
       -webkit-line-clamp: 2;

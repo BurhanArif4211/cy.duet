@@ -29,7 +29,7 @@ import { RestURL } from './../main.js';
     } 
 </script>
 
-<nav class={`mt-[24px] fixed w-full z-50 transition-all duration-300 bg-cyan-500 sm:bg-[url('${RestURL}/wp/wp-content/uploads/2025/09/Tech_holo1.png')] bg-no-repeat bg-right ${isScrolled ? "bg-cyan-500 text-white shadow-md py-0.5 sm:py-2 " : " text-black py-4"}`}>
+<nav class={`mt-[24px] fixed w-full z-50 transition-all duration-300 bg-cyan-500 sm:bg-[url('${RestURL}/wp/wp-content/uploads/2025/09/Tech_holo1.png')] bg-no-repeat bg-right ${isScrolled ? "bg-cyan-500 text-white shadow-md translate-y-[-104px] " : " text-black py-4"}`}>
     <!-- <div class="relative">
         <a class= "absolute z-0 left-4 top-2 w-[115px] h-[40px] m-[24px] hidden  xl:block p-2 border-2 cursor-pointer rounded-2xl text-sm text-white text-center " href="https://duet.edu.pk">Back main site</a>
     </div> -->
