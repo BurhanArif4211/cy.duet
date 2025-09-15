@@ -81,11 +81,7 @@
 
 <div class={`${font} font-mono p-4 rounded-lg`}>
     {#each displayedText as line, index}
-        <div class={ (index === currentLineIndex && !isWaiting ) ? 'text-black' : 'text-gray-700'}>
             {line}
-            {#if index === currentLineIndex && !isWaiting && !isDeleting}
-                <span class="inline-block w-2 h-4 bg-black align-middle ml-1 animate-pulse"></span>
-            {/if}
-        </div>
+            <br>
     {/each}
 </div>

@@ -149,12 +149,12 @@
   {:else if data}
     <div class="max-w-7xl mx-auto p-0 sm:px-4 py-8">
       <!-- Breadcrumb -->
-      <nav class="text-sm text-gray-600 mb-8">
-        <a href="/" on:click|preventDefault={() => router.navigate('/')} class="hover:text-cyan-600">Home</a>
+      <nav class="text-sm text-white mb-8">
+        <a href="/" on:click|preventDefault={() => router.navigate('/')} class="hover:text-cyan-100">Home</a>
         <span class="mx-2">/</span>
-        <a href="/posts" on:click|preventDefault={() => router.navigate('/posts')} class="hover:text-cyan-600">Posts</a>
+        <a href="/posts" on:click|preventDefault={() => router.navigate('/posts')} class="hover:text-cyan-100">Posts</a>
         <span class="mx-2">/</span>
-        <span class="text-gray-900">{data.title.rendered}</span>
+        <span class="text-gray-200">{data.title.rendered?.slice(0,20)}...</span>
       </nav>
       
       <div class="flex flex-col lg:flex-row gap-8">
@@ -319,7 +319,7 @@
   {/if}
   
   <style>
-    /* src/styles/wordpress-content.css */
+    
 /* Reset Tailwind's preflight for WordPress content areas */
 .prose :global {
   /* Headings */

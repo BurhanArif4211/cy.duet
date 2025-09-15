@@ -78,7 +78,7 @@
     "Secure <",
     "Contain <",
     "Protect <",
-]}  font="text-right text-[1.7rem] md:text-[2.2rem]"/>
+]}  font="text-right text-white text-[1.7rem] md:text-[2.2rem]"/>
 </div>
 
 <LatestPosts posts={posts}/> 
