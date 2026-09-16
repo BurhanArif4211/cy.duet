@@ -22,14 +22,15 @@
 </script>
 
 <header>
-  <!-- ═══════════ TOP WHITE BAR ═══════════ -->
+   <!-- ═══════════ TOP WHITE BAR ═══════════ -->
   <div class="relative bg-white border-b border-purple-100 overflow-hidden">
-    <!-- DUET watermark (faded into white) -->
+
+    <!-- DUET watermark — LEFT side, faded into white -->
     <img
       src={STATIC.universityLogoUrl}
       alt=""
       aria-hidden="true"
-      class="pointer-events-none select-none absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 h-20 sm:h-28 object-contain opacity-[0.5] mix-blend-multiply"
+      class="pointer-events-none select-none absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 h-24 sm:h-32 object-contain opacity-[0.4] mix-blend-multiply"
     />
 
     <!-- Purple corner glows -->
@@ -62,28 +63,23 @@
         <!-- Left spacer on mobile -->
         <div class="lg:hidden w-8 flex-shrink-0"></div>
 
-        <!-- Center: shield + name + tagline -->
+        <!-- Center: shield logo only, enlarged -->
         <a
           href="/home"
           on:click={(e) => go(e, '/home')}
-          class="group flex items-center gap-3 sm:gap-4 justify-center flex-1 lg:flex-none min-w-0"
+          class="group relative flex items-center justify-center flex-shrink-0"
+          aria-label={`${STATIC.departmentName} — Home`}
         >
-          <!-- Shield with glow ring -->
-          <div class="relative flex-shrink-0">
-            <div class="absolute inset-0 rounded-2xl bg-gradient-to-tr from-purple-500 to-fuchsia-400 opacity-0 group-hover:opacity-50 blur-md transition-opacity duration-300"></div>
-            <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-purple-200 bg-white p-1.5 shadow-[0_0_0_4px_rgba(139,92,246,0.06)] group-hover:border-purple-500 group-hover:shadow-[0_0_0_6px_rgba(139,92,246,0.15)] transition-all duration-300">
-              <img src={STATIC.logoUrl} alt={STATIC.logoAlt} class="w-full h-full object-contain" />
-            </div>
-          </div>
+          <!-- gradient glow behind shield on hover -->
+          <div class="absolute inset-0 rounded-3xl bg-gradient-to-tr from-purple-500 to-fuchsia-400 opacity-0 group-hover:opacity-60 blur-lg transition-opacity duration-300"></div>
 
-          <!-- Text stack -->
-          <div class="flex flex-col min-w-0">
-            <span class="text-lg sm:text-2xl font-bold text-gray-900 leading-tight group-hover:text-purple-800 transition-colors whitespace-nowrap">
-              {STATIC.departmentName}
-            </span>
-            <span class="text-[10px] sm:text-xs text-purple-600 font-medium italic leading-tight whitespace-nowrap">
-              {STATIC.tagline}
-            </span>
+          <!-- shield -->
+          <div class="relative w-[68px] h-[68px] sm:w-[88px] sm:h-[88px] rounded-2xl border-2 border-purple-200 bg-white p-2 shadow-[0_0_0_4px_rgba(139,92,246,0.06)] group-hover:border-purple-500 group-hover:shadow-[0_0_0_6px_rgba(139,92,246,0.15)] transition-all duration-300">
+            <img
+              src={STATIC.logoUrl}
+              alt={STATIC.logoAlt}
+              class="w-full h-full object-contain"
+            />
           </div>
         </a>
 
@@ -111,6 +107,7 @@
     <!-- Bottom gradient hairline -->
     <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-400/60 to-transparent"></div>
   </div>
+
 
   <!-- ═══════════ PURPLE STICKY NAV ═══════════ -->
   <nav class="sticky top-0 z-40 bg-[#4B338C] shadow-[0_4px_24px_-6px_rgba(75,51,140,0.6)] relative">
