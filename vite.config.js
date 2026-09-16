@@ -1,14 +1,15 @@
-// vite.config.js
-import { defineConfig } from 'vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
-import path from 'path';
+import { defineConfig } from 'vite'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-	plugins: [svelte()],
-	base: '/',                    // ← CRITICAL: absolute base, not '/client/'
+	plugins: [
+		tailwindcss(),
+		svelte()
+	],
+	base: '/',                    // ← the fix
 	build: {
-		outDir: 'dist',             // ← default; NOT 'client' or 'build/client'
-		emptyOutDir: true,
-		sourcemap: false
+		outDir: 'dist',
+		emptyOutDir: true
 	}
-});
+})

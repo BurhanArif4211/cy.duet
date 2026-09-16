@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build --base=/client/ --mode production",
+    "build": "vite build --mode production",
     "preview": "vite preview"
   },
   "devDependencies": {
