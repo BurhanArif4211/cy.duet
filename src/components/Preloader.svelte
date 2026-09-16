@@ -4,14 +4,10 @@
 
   const bootLines = [
     { text: 'cyber@duet:~$ init --secure-session',                delay: 180 },
-    { text: 'cyber@duet:~$ connect duet-backend.vercel.app',      delay: 260 },
-    { text: '  ✓ handshake ok',                                   delay: 160 },
     { text: 'cyber@duet:~$ fetch /api/settings',                  delay: 260 },
     { text: '  ✓ 200 OK',                                         delay: 140 },
     { text: 'cyber@duet:~$ fetch /api/hero-slides',               delay: 260 },
     { text: '  ✓ 200 OK',                                         delay: 140 },
-    { text: 'cyber@duet:~$ decrypt payload',                      delay: 240 },
-    { text: '  ✓ 128 keys resolved',                              delay: 180 },
     { text: 'cyber@duet:~$ mount SPA',                            delay: 220 },
     { text: '  ✓ ready.',                                         delay: 200 }
   ];

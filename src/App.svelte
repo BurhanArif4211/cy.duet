@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { router } from './router.js';
   import { loadSettings } from './stores/settings.js';
-  import Preloader from './components/Preloader.svelte';
+  import Loading from './components/Loading.svelte';
   import Navbar from './components/Navbar.svelte';
   import Footer from './components/Footer.svelte';
 
@@ -33,7 +33,7 @@
 </svelte:head>
 
 {#if !bootComplete}
-  <Preloader />
+  <Loading />
 {/if}
 
 <div

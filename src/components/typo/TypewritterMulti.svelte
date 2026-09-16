@@ -1,27 +1,28 @@
-<!-- src/components/Typewriter.svelte -->
+<!-- src/components/TypewriterMulti.svelte -->
 <script>
   import { onMount, onDestroy } from 'svelte';
 
-  export let text = '';
-  export let typingSpeed = 90;
-  export let eraseSpeed = 45;
-  export let delay = 2200;
+  export let texts = [];
+  export let typingSpeed = 70;
+  export let eraseSpeed = 30;
+  export let delay = 2000;
   export let loop = true;
   export let font = '';
   export let cursorClass = 'bg-purple-400';
-  export let showCursor = true;
 
   let displayedText = '';
+  let index = 0;
   let isTyping = true;
   let isDeleting = false;
   let timer;
 
   function type() {
+    const current = texts[index] ?? '';
     if (isTyping) {
-      if (displayedText.length < text.length) {
-        displayedText = text.slice(0, displayedText.length + 1);
+      if (displayedText.length < current.length) {
+        displayedText = current.slice(0, displayedText.length + 1);
         timer = setTimeout(type, typingSpeed);
-      } else if (loop) {
+      } else {
         timer = setTimeout(() => { isTyping = false; isDeleting = true; type(); }, delay);
       }
     } else if (isDeleting) {
@@ -30,6 +31,9 @@
         timer = setTimeout(type, eraseSpeed);
       } else {
         isDeleting = false;
+        const next = (index + 1) % texts.length;
+        if (!loop && next === 0) return;
+        index = next;
         isTyping = true;
         timer = setTimeout(type, typingSpeed);
       }
@@ -41,5 +45,5 @@
 </script>
 
 <span class={`font-mono ${font}`}>
-  {displayedText}{#if showCursor}<span class={`inline-block w-[2px] h-[1em] ${cursorClass} align-middle ml-1 animate-pulse`}></span>{/if}
+  {displayedText}<span class={`inline-block w-[2px] h-[1em] ${cursorClass} align-middle ml-1 animate-pulse`}></span>
 </span>
