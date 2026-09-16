@@ -9,7 +9,7 @@ export const routes = {
 	'/contact': { component: () => import('./page/ContactPage.svelte') },
 	'/news': { component: () => import('./page/PostsPage.svelte') },
 	'/publications': { component: () => import('./page/PublicationsPage.svelte') },
-
+	'/societies/ieee': { component: () => import('./page/IeeePage.svelte') },
 	'/news/:slug': {
 		component: () => import('./page/PostPage.svelte'),
 		data: async ({ slug }) => {
