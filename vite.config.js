@@ -1,22 +1,14 @@
-import { defineConfig } from 'vite'
-import { svelte } from '@sveltejs/vite-plugin-svelte'
-import tailwindcss from '@tailwindcss/vite'
-// https://vite.dev/config/
+// vite.config.js
+import { defineConfig } from 'vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import path from 'path';
+
 export default defineConfig({
-  plugins: [
-    svelte(),
-    tailwindcss()
-  ],
-  build:{
-    outDir:"dist",
-    assetsDir:"assets",
-    rollupOptions:{
-      output: {
-        // Customize filenames to remove hashes
-        entryFileNames: `assets/[name].js`,
-        chunkFileNames: `assets/[name].js`,
-        assetFileNames: `assets/[name].[ext]`,
-      },
-    }
-  }
-})
+	plugins: [svelte()],
+	base: '/',                    // ← CRITICAL: absolute base, not '/client/'
+	build: {
+		outDir: 'dist',             // ← default; NOT 'client' or 'build/client'
+		emptyOutDir: true,
+		sourcemap: false
+	}
+});
