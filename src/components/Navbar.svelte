@@ -1,150 +1,146 @@
-<!-- Navbar.svelte -->
 <script>
-    import { onMount } from 'svelte';
-    import { router } from '../router';
-import { RestURL } from './../main.js';
-    
-    export let data;
-    
-    let isScrolled = false;
-    let mobileMenuOpen = false;
-    let activeDropdown = null;
-    
-    // Handle scroll to hide/show navbar
-    onMount(() => {
-        const handleScroll = () => {
-            isScrolled = window.scrollY > 50;
-        };
-        
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    });
-    
-    function toggleDropdown(index) {
-        activeDropdown = activeDropdown === index ? null : index;
-    }
-    
-    function closeDropdowns() {
-        activeDropdown = null;
-    } 
+  import { onMount } from 'svelte';
+  import { router } from '../router.js';
+  import { settings } from '../stores/settings.js';
+  import { STATIC } from '../config.js';
+
+  let mobileMenuOpen = false;
+  let activeDropdown = null;
+
+  function toggleDropdown(i) {
+    activeDropdown = activeDropdown === i ? null : i;
+  }
+  function closeDropdowns() { activeDropdown = null; }
+
+  const menuItems = [
+    { text: 'Home',         href: '/home' },
+    { text: 'About',        href: '/about' },
+    { text: 'Faculty',      href: '/faculty' },
+    { text: 'News',         href: '/news' },
+    { text: 'Publications', href: '/publications' },
+    { text: 'Contact',      href: '/contact' }
+  ];
+
+  function go(e, href) {
+    e.preventDefault();
+    mobileMenuOpen = false;
+    closeDropdowns();
+    router.navigate(href);
+  }
 </script>
 
-<nav class={`mt-[24px] fixed w-full z-50 transition-all duration-300 bg-cyan-500 sm:bg-[url('${RestURL}/wp/wp-content/uploads/2025/09/Tech_holo1.png')] bg-no-repeat bg-right ${isScrolled ? "bg-cyan-500 text-white shadow-md translate-y-[-104px] " : " text-black py-4"}`}>
-    <!-- <div class="relative">
-        <a class= "absolute z-0 left-4 top-2 w-[115px] h-[40px] m-[24px] hidden  xl:block p-2 border-2 cursor-pointer rounded-2xl text-sm text-white text-center " href="https://duet.edu.pk">Back main site</a>
-    </div> -->
-    <div class="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8">
-               <div class="flex justify-between h-12 sm:h-20">
-            <div class="flex items-center">
-                <!-- Logo -->
-                <!-- svelte-ignore a11y_no_static_element_interactions -->
-                <!-- svelte-ignore a11y_click_events_have_key_events -->
-                <div class=" cursor-pointer flex-shrink-0 sm:h-full flex items-center text-[#a2e6ff] bg-[linear-gradient(90deg,#a2e6ff,transparent)] rounded-xs rounded-l-2xl p-1 px-2">
-                    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-                    <img onclick={window.location='https://duet.edu.pk/'} alt={data.logo.alt} src={data.logo.src} class="w-15 flex items-center justify-center" />  
-                     <div class="mx-1 sm:mx-4 h-9 w-px bg-white flex-shrink-0"></div>
-                    <a href="/" class="text-2xl sm:text-4xl font-bold text-white">{data.logo.text}</a>
-                </div>
-                
-                <!-- Desktop Navigation -->
-                <div class="hidden md:ml-6 md:flex md:items-center md:space-x-1">
-                    {#each data.menuItems as item, index}
-                        <div class="relative">
-                            {#if item.children}
-                                <button 
-                                    class={`px-3 py-2 rounded-md text-sm font-medium ${activeDropdown === index ? 'text-white bg-cyan-500' : 'text-white hover:bg-cyan-600'}`}
-                                    onclick={() => toggleDropdown(index)}
-                                    onblur={() => setTimeout(closeDropdowns, 150)}
-                                >
-                                    {item.text}
-                                    <svg class="w-4 h-4 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </button>
-                                
-                                {#if activeDropdown === index}
-                                    <div class="absolute z-10 left-0 mt-1 w-48 rounded-md shadow-lg bg-cyan-500 ring-1 ring-black ring-opacity-5">
-                                        <div class="py-1">
-                                            {#each item.children as child}
-                                                <a href={child.href} class="block px-4 py-2 text-sm text-white hover:bg-cyan-600 ">
-                                                    {child.text}
-                                                </a>
-                                            {/each}
-                                        </div>
-                                    </div>
-                                {/if}
-                            {:else}
-                                <a href={item.href} class="px-3 py-2 rounded-md text-sm font-medium  text-white  hover:bg-cyan-600">
-                                    {item.text}
-                                </a>
-                            {/if}
-                        </div>
-                    {/each}
-                </div>
-            </div>
-            
-            <!-- Mobile menu button -->
-            <div class="md:hidden flex items-center">
-                <!-- svelte-ignore a11y_consider_explicit_label -->
-                <button 
-                    class="inline-flex items-center justify-center p-2 rounded-md text-white bg-cyan-500 focus:outline-none"
-                    onclick={() => mobileMenuOpen = !mobileMenuOpen}
-                >
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path 
-                            class={!mobileMenuOpen ? 'block' : 'hidden'} 
-                            stroke-linecap="round" 
-                            stroke-linejoin="round" 
-                            stroke-width="2" 
-                            d="M4 6h16M4 12h16M4 18h16" 
-                        />
-                        <path 
-                            class={mobileMenuOpen ? 'block' : 'hidden'} 
-                            stroke-linecap="round" 
-                            stroke-linejoin="round" 
-                            stroke-width="2" 
-                            d="M6 18L18 6M6 6l12 12" 
-                        />
-                    </svg>
-                </button>
-            </div>
+<header>
+  <!-- ── TOP WHITE BAR (scrolls away) ──────────────────────────── -->
+  <div class="bg-white border-b border-purple-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20 sm:h-24">
+        <!-- Logo + text -->
+        <a
+          href="/home"
+          on:click={(e) => go(e, '/home')}
+          class="flex items-center gap-3 sm:gap-4 group"
+        >
+          <div class="relative w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-2xl border-2 border-purple-200 p-1.5 flex items-center justify-center shadow-sm group-hover:border-purple-500 transition-colors">
+            <img src={STATIC.logoUrl} alt={STATIC.logoAlt} class="max-w-full max-h-full object-contain" />
+          </div>
+          <div class="flex flex-col">
+            <span class="text-lg sm:text-2xl font-bold text-gray-900 leading-tight">
+              {STATIC.departmentName}
+            </span>
+            <span class="text-[10px] sm:text-xs text-purple-600 font-medium italic leading-tight">
+              {STATIC.tagline}
+            </span>
+          </div>
+        </a>
+
+        <!-- Right: contact + back to main site -->
+        <div class="hidden md:flex items-center gap-6">
+          <div class="hidden lg:flex flex-col text-right text-xs">
+            {#if $settings.contact_email}
+              <a href={`mailto:${$settings.contact_email}`} class="text-gray-600 hover:text-purple-700 transition-colors">
+                {$settings.contact_email}
+              </a>
+            {/if}
+            {#if $settings.contact_phone}
+              <a href={`tel:${$settings.contact_phone.replace(/[^0-9+]/g,'')}`} class="text-gray-600 hover:text-purple-700 transition-colors">
+                {$settings.contact_phone}
+              </a>
+            {/if}
+          </div>
+          <a
+            href={STATIC.mainSiteUrl}
+            target="_blank" rel="noopener noreferrer"
+            class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            ← DUET Main Site
+          </a>
         </div>
+      </div>
     </div>
-    
-    <!-- Mobile menu -->
-    {#if mobileMenuOpen}
-        <div class={`md:hidden shadow-lg ${isScrolled ? 'bg-cyan-500 text-white shadow-md py-2 ' : ' py-2'}`}>
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                {#each data.menuItems as item, index}
-                    {#if item.children}
-                        <div>
-                            <button 
-                                class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-white hover:bg-cyan-500 flex justify-between items-center"
-                                onclick={() => toggleDropdown(index)}
-                            >
-                                <span>{item.text}</span>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </button>
-                            
-                            {#if activeDropdown === index}
-                                <div class="pl-6 mt-1 space-y-1">
-                                    {#each item.children as child}
-                                        <a href={child.href} class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-cyan-500">
-                                            {child.text}
-                                        </a>
-                                    {/each}
-                                </div>
-                            {/if}
-                        </div>
-                    {:else}
-                        <a href={item.href} class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-cyan-500">
-                            {item.text}
-                        </a>
-                    {/if}
-                {/each}
-            </div>
+  </div>
+
+  <!-- ── PURPLE STICKY NAV ─────────────────────────────────────── -->
+  <nav class="sticky top-0 z-40 bg-[#4B338C] shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14">
+        <!-- Desktop links -->
+        <div class="hidden md:flex items-center gap-1">
+          {#each menuItems as item}
+            <a
+              href={item.href}
+              on:click={(e) => go(e, item.href)}
+              class="px-4 py-2 rounded-lg text-sm font-medium text-white/90 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              {item.text}
+            </a>
+          {/each}
         </div>
+
+        <!-- Mobile branding (shown only on mobile since top bar is big) -->
+        <div class="md:hidden flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-purple-300 animate-pulse"></span>
+          <span class="text-white text-sm font-medium tracking-wide">Cyber Security · DUET</span>
+        </div>
+
+        <!-- Mobile hamburger -->
+        <button
+          class="md:hidden inline-flex items-center justify-center p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+          on:click={() => mobileMenuOpen = !mobileMenuOpen}
+          aria-label="Toggle menu"
+        >
+          <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+            <path class={!mobileMenuOpen ? 'block' : 'hidden'} stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <path class={mobileMenuOpen ? 'block' : 'hidden'} stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Glowing baseline -->
+    <div class="h-px bg-gradient-to-r from-transparent via-purple-300/70 to-transparent"></div>
+
+    <!-- Mobile drawer -->
+    {#if mobileMenuOpen}
+      <div class="md:hidden bg-[#3d2877] border-t border-purple-500/30">
+        <div class="px-3 py-3 space-y-1">
+          {#each menuItems as item}
+            <a
+              href={item.href}
+              on:click={(e) => go(e, item.href)}
+              class="block px-4 py-3 rounded-lg text-base font-medium text-white hover:bg-white/10 transition-colors"
+            >
+              {item.text}
+            </a>
+          {/each}
+          <a
+            href={STATIC.mainSiteUrl}
+            target="_blank" rel="noopener noreferrer"
+            class="block px-4 py-3 rounded-lg text-base font-medium text-white bg-purple-900/60 hover:bg-purple-900 transition-colors text-center mt-2"
+          >
+            ← DUET Main Site
+          </a>
+        </div>
+      </div>
     {/if}
-</nav>
+  </nav>
+</header>

@@ -1,314 +1,139 @@
-<!-- src/pages/ContactPage.svelte -->
 <script>
-    import { onMount } from 'svelte';
-    import { RestURL } from '../main';
-    let contactData;
-    let loading = true;
-    let error = null;
-    let formData = {
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
-    };
-    let formSubmitted = false;
-    let formSubmitting = false;
-    
-    // Fetch contact data from status-bar API
-    async function fetchContactData() {
-      try {
-        const response = await fetch(`${RestURL}/wp-json/acf/v1/status-bar/`);
-        if (!response.ok) throw new Error('Failed to fetch contact information');
-        
-        const data = await response.json();
-        contactData = { ...contactData, ...data }; // Merge with defaults
-        loading = false;
-      } catch (err) {
-        error = err.message;
-        loading = false;
-        // Continue with default data
-      }
-    }
-    
-    // Handle form submission
-    async function handleSubmit(event) {
-      event.preventDefault();
-      formSubmitting = true;
-      
-      // Simulate form submission (replace with actual API call)
-      setTimeout(() => {
-        formSubmitted = true;
-        formSubmitting = false;
-        formData = { name: '', email: '', subject: '', message: '' };
-        
-        // Reset form after 5 seconds
-        setTimeout(() => {
-          formSubmitted = false;
-        }, 5000);
-      }, 1500);
-    }
-    
-    // Handle input changes
-    function handleInputChange(event) {
-      const { name, value } = event.target;
-      formData = { ...formData, [name]: value };
-    }
-    
-    onMount(() => {
-      fetchContactData();
-    });
-  </script>
-  
-  <div class="min-h-screen bg-gray-50 py-12">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- Page Header -->
-      <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          Get in touch with the Department of Cyber Security. We're here to answer your questions and help you get started.
-        </p>
-      </div>
-      
-      {#if loading}
-        <!-- Loading State -->
-        <div class="flex justify-center items-center min-h-[400px]">
-          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600"></div>
-        </div>
-      {:else}
-        <!-- Main Content -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <!-- Contact Information -->
-          <div>
-            <div class="bg-white rounded-lg shadow-sm p-8">
-              <h2 class="text-2xl font-bold text-gray-900 mb-6">Get In Touch</h2>
-              
-              <!-- Contact Methods -->
-              <div class="space-y-6">
-                <!-- Email -->
-                <div class="flex items-start">
-                  <div class="bg-cyan-100 p-3 rounded-lg mr-4 flex-shrink-0">
-                    <svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Email Us</h3>
-                    <a 
-                      href={`mailto:${contactData.email}`} 
-                      class="text-cyan-600 hover:text-cyan-800 text-lg font-medium"
-                    >
-                      {contactData.email}
-                    </a>
-                    <p class="text-gray-600 text-sm mt-1">We'll respond within 24 hours</p>
-                  </div>
-                </div>
-                
-                <!-- Phone -->
-                <div class="flex items-start">
-                  <div class="bg-cyan-100 p-3 rounded-lg mr-4 flex-shrink-0">
-                    <svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Call Us</h3>
-                    <a 
-                      href={`tel:${contactData.phone.replace(/[^0-9+]/g, '')}`} 
-                      class="text-cyan-600 hover:text-cyan-800 text-lg font-medium"
-                    >
-                      {contactData.phone}
-                    </a>
-                    <p class="text-gray-600 text-sm mt-1">Mon-Fri from 8am to 5pm</p>
-                  </div>
-                </div>
-                
-                <!-- Location -->
-                <div class="flex items-start">
-                  <div class="bg-cyan-100 p-3 rounded-lg mr-4 flex-shrink-0">
-                    <svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Visit Us</h3>
-                    <!-- TODO Update this to be dynamic-->
-                    <p class="text-gray-400">Dawood University of Engineering & Technology, Block 17 Gulshan-e-Iqbal, Karachi, Sindh, Pakistan, (75300).</p>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- TODO Update this to be dynamic Office Hours --> 
-              <div class="mt-8 pt-6 border-t border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Office Hours</h3>
-                <div class="space-y-2">
-                  <div class="flex justify-between">
-                    <span class="text-gray-600">Monday - Friday</span>
-                    <!-- TODO Update this to be dynamic-->
-                    <span class="font-medium text-gray-900">8:00 AM - 5:00 PM</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-gray-600">Sunday</span>
-                    <span class="font-medium text-gray-900">Closed</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Emergency Contact -->
-            <div class="bg-red-50 border border-red-200 rounded-lg p-6 mt-6">
-              <div class="flex items-start">
-                <div class="bg-red-100 p-2 rounded-full mr-4 flex-shrink-0">
-                  <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="text-lg font-semibold text-red-800 mb-2">Emergency Contact</h3>
-                  <p class="text-red-700 text-sm mb-2">
-                    For urgent security incidents or critical issues outside office hours, please contact:
-                  </p>
-                    <!-- TODO Update this to be dynamic-->
+  import { settings } from '../stores/settings.js';
 
-                  <a href="#" class="text-red-800 font-medium hover:text-red-900">
-                    +1 (555) EMERGENCY
-                  </a>
-                </div>
-              </div>
-            </div>
+  let form = { name: '', email: '', subject: '', message: '' };
+  let submitting = false;
+  let submitted = false;
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    submitting = true;
+    // Simulated send — plug in your backend endpoint later
+    await new Promise(r => setTimeout(r, 1200));
+    submitting = false;
+    submitted = true;
+    form = { name: '', email: '', subject: '', message: '' };
+    setTimeout(() => submitted = false, 6000);
+  }
+</script>
+
+<section class="bg-gradient-to-br from-[#4B338C] to-purple-900 text-white py-20 px-4">
+  <div class="max-w-4xl mx-auto text-center">
+    <div class="text-xs uppercase tracking-[0.3em] text-purple-300 mb-4">Get in touch</div>
+    <h1 class="text-4xl md:text-5xl font-bold mb-3">Contact Us</h1>
+    <p class="text-lg text-purple-200">We'd love to hear from you.</p>
+  </div>
+</section>
+
+<div class="bg-gray-50 py-14 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+    <!-- Left: Contact info cards -->
+    <div class="lg:col-span-2 space-y-4">
+      {#if $settings.contact_email}
+        <a href={`mailto:${$settings.contact_email}`} class="flex items-start gap-4 bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div class="w-11 h-11 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
           </div>
-          
-          <!-- Contact Form -->
+          <div class="min-w-0">
+            <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Email</div>
+            <div class="text-gray-900 font-medium break-all">{$settings.contact_email}</div>
+          </div>
+        </a>
+      {/if}
+
+      {#if $settings.contact_phone}
+        <a href={`tel:${$settings.contact_phone.replace(/[^0-9+]/g,'')}`} class="flex items-start gap-4 bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div class="w-11 h-11 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+          </div>
           <div>
-            <div class="bg-white rounded-lg shadow-sm p-8">
-              <h2 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
-              
-              {#if formSubmitted}
-                <!-- Success Message -->
-                <div class="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-                  <svg class="w-12 h-12 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                  <h3 class="text-lg font-semibold text-green-800 mb-2">Message Sent Successfully!</h3>
-                  <p class="text-green-700">Thank you for contacting us. We'll get back to you shortly.</p>
-                </div>
-              {:else}
-                <!-- Contact Form -->
-                <form on:submit={handleSubmit} class="space-y-6">
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <!-- Name -->
-                    <div>
-                      <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        required
-                        bind:value={formData.name}
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent transition-colors"
-                        placeholder="Your full name"
-                      />
-                    </div>
-                    
-                    <!-- Email -->
-                    <div>
-                      <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                        bind:value={formData.email}
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent transition-colors"
-                        placeholder="your.email@example.com"
-                      />
-                    </div>
-                  </div>
-                  
-                  <!-- Subject -->
-                  <div>
-                    <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">
-                      Subject *
-                    </label>
-                    <input
-                      type="text"
-                      id="subject"
-                      name="subject"
-                      required
-                      bind:value={formData.subject}
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent transition-colors"
-                      placeholder="What is this regarding?"
-                    />
-                  </div>
-                  
-                  <!-- Message -->
-                  <div>
-                    <label for="message" class="block text-sm font-medium text-gray-700 mb-2">
-                      Message *
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows="5"
-                      required
-                      bind:value={formData.message}
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent transition-colors resize-vertical"
-                      placeholder="Please describe your inquiry in detail..."
-                    ></textarea>
-                  </div>
-                  
-                  <!-- Submit Button -->
-                  <button
-                    type="submit"
-                    disabled={formSubmitting}
-                    class="w-full bg-cyan-600 text-white py-3 px-6 rounded-lg hover:bg-cyan-700 disabled:bg-cyan-400 disabled:cursor-not-allowed transition-colors font-medium"
-                  >
-                    {#if formSubmitting}
-                      <span class="flex items-center justify-center">
-                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Sending...
-                      </span>
-                    {:else}
-                      Send Message
-                    {/if}
-                  </button>
-                </form>
-              {/if}
-            </div>
-            
-            <!-- Additional Info -->
-            <div class="bg-cyan-50 rounded-lg p-6 mt-6">
-              <h3 class="text-lg font-semibold text-cyan-900 mb-3">Before You Contact</h3>
-              <ul class="space-y-2 text-cyan-800 text-sm">
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-cyan-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span>Check our FAQ page for common questions</span>
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-cyan-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span>Include relevant details for faster response</span>
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-cyan-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span>Response time: typically within 24 business hours</span>
-                </li>
-              </ul>
-            </div>
+            <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Phone</div>
+            <div class="text-gray-900 font-medium">{$settings.contact_phone}</div>
+            {#if $settings.contact_phone_alt}
+              <div class="text-sm text-gray-600">{$settings.contact_phone_alt}</div>
+            {/if}
+          </div>
+        </a>
+      {/if}
+
+      {#if $settings.address}
+        <div class="flex items-start gap-4 bg-white rounded-xl p-5 shadow-sm">
+          <div class="w-11 h-11 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <div>
+            <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Address</div>
+            <div class="text-gray-900 font-medium leading-relaxed">{$settings.address}</div>
           </div>
         </div>
       {/if}
+
+      {#if $settings.office_hours}
+        <div class="flex items-start gap-4 bg-white rounded-xl p-5 shadow-sm">
+          <div class="w-11 h-11 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Office Hours</div>
+            <div class="text-gray-900 font-medium whitespace-pre-line">{$settings.office_hours}</div>
+          </div>
+        </div>
+      {/if}
+
+      {#if $settings.whatsapp_url}
+        <a href={$settings.whatsapp_url} target="_blank" rel="noopener noreferrer"
+           class="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-500 text-white font-medium rounded-xl p-4 transition-colors">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.52 3.48A11.94 11.94 0 0012 0C5.373 0 0 5.373 0 12c0 2.117.553 4.104 1.518 5.83L0 24l6.335-1.502A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12 0-3.204-1.248-6.11-3.48-8.52zM12 22a9.94 9.94 0 01-5.06-1.372l-.363-.216-3.76.892.9-3.67-.236-.38A9.94 9.94 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm5.32-7.382c-.29-.145-1.717-.848-1.983-.944-.266-.096-.46-.145-.653.145-.193.29-.75.944-.92 1.14-.17.193-.34.217-.63.072-.29-.145-1.224-.452-2.33-1.44-.86-.768-1.44-1.717-1.61-2.007-.17-.29-.018-.446.127-.59.13-.13.29-.338.434-.507.144-.169.192-.29.29-.484.096-.193.048-.363-.024-.507-.072-.145-.653-1.576-.896-2.156-.235-.567-.475-.49-.653-.5l-.555-.01a1.07 1.07 0 00-.774.363c-.266.29-1.014.99-1.014 2.415 0 1.424 1.038 2.8 1.183 2.99.144.193 2.043 3.118 4.947 4.372.691.298 1.23.476 1.65.61.694.22 1.325.19 1.823.115.557-.083 1.716-.702 1.958-1.379.242-.676.242-1.256.17-1.378-.073-.121-.267-.194-.557-.339z"/></svg>
+          Chat on WhatsApp
+        </a>
+      {/if}
+    </div>
+
+    <!-- Right: Form -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm p-6 sm:p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
+
+      {#if submitted}
+        <div class="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+          <svg class="w-12 h-12 text-green-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <h3 class="font-semibold text-green-800 mb-1">Message sent!</h3>
+          <p class="text-sm text-green-700">We'll get back to you within 24 business hours.</p>
+        </div>
+      {:else}
+        <form on:submit={handleSubmit} class="space-y-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <label class="block">
+              <span class="text-sm font-medium text-gray-700 mb-1.5 block">Full Name *</span>
+              <input bind:value={form.name} required type="text"
+                     class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                     placeholder="Your name" />
+            </label>
+            <label class="block">
+              <span class="text-sm font-medium text-gray-700 mb-1.5 block">Email *</span>
+              <input bind:value={form.email} required type="email"
+                     class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                     placeholder="you@example.com" />
+            </label>
+          </div>
+          <label class="block">
+            <span class="text-sm font-medium text-gray-700 mb-1.5 block">Subject *</span>
+            <input bind:value={form.subject} required type="text"
+                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                   placeholder="What is this about?" />
+          </label>
+          <label class="block">
+            <span class="text-sm font-medium text-gray-700 mb-1.5 block">Message *</span>
+            <textarea bind:value={form.message} required rows="5"
+                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition resize-y"
+                      placeholder="Tell us more…"></textarea>
+          </label>
+          <button type="submit" disabled={submitting}
+                  class="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors">
+            {submitting ? 'Sending…' : 'Send Message'}
+          </button>
+        </form>
+      {/if}
     </div>
   </div>
+</div>

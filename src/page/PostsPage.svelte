@@ -1,306 +1,134 @@
-<!-- src/pages/PostsPage.svelte -->
 <script>
-    import { onMount } from 'svelte';
-    import { router } from '../router.js';
-    import { RestURL } from './../main.js';
-    
-    let categories = [];
-    let postsByCategory = {};
-    let selectedCategory = 'all';
-    let loading = true;
-    let error = null;
-    let visiblePosts = 6; // Number of posts to show initially
-    let loadMoreText = 'Load More Posts';
-    
-    // Format date function
-    function formatDate(dateString) {
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return new Date(dateString).toLocaleDateString(undefined, options);
-    }
-    
-    // Fetch categories and posts
-    async function fetchData() {
-      try {
-        loading = true;
-        
-        // Fetch categories
-        const categoriesResponse = await fetch(`${RestURL}/wp-json/wp/v2/categories&per_page=20`);
-        if (!categoriesResponse.ok) throw new Error('Failed to fetch categories');
-        categories = await categoriesResponse.json();
-        
-        // Add "All" category option
-        categories.unshift({ id: 'all', name: 'All Posts', slug: 'all' });
-        
-        // Fetch posts for each category
-        const categoryPromises = categories
-          .filter(cat => cat.id !== 'all')
-          .map(async category => {
-            const postsResponse = await fetch(
-              `${RestURL}/wp-json/wp/v2/posts&categories=${category.id}&per_page=6&_embed`
-            );
-            
-            if (postsResponse.ok) {
-              const posts = await postsResponse.json();
-              return { categoryId: category.id, posts };
-            }
-            return { categoryId: category.id, posts: [] };
-          });
-        
-        // Wait for all category posts to load
-        const categoryResults = await Promise.all(categoryPromises);
-        
-        // Organize posts by category
-        postsByCategory = categoryResults.reduce((acc, result) => {
-          acc[result.categoryId] = result.posts;
-          return acc;
-        }, {});
-        
-        // Also fetch some recent posts for the "All" view
-        const allPostsResponse = await fetch(`${RestURL}/wp-json/wp/v2/posts&per_page=12&_embed`);
-        if (allPostsResponse.ok) {
-          postsByCategory.all = await allPostsResponse.json();
-        }
-        
-        loading = false;
-      } catch (err) {
-        error = err.message;
-        loading = false;
-        
-      }
-    }
-    // Load more posts
-    function loadMorePosts() {
-      if (selectedCategory === 'all') {
-        visiblePosts += 6;
-        // If we've reached the total, change button text
-        if (visiblePosts >= postsByCategory.all.length) {
-          loadMoreText = 'No More Posts';
-        }
-      }
-    }
-    
-    // Get posts for the selected category
-    function getPostsForCategory() {
-      if (selectedCategory === 'all') {
-        return postsByCategory.all ? postsByCategory.all.slice(0, visiblePosts) : [];
-      }
-      return postsByCategory[selectedCategory] || [];
-    }
-    
-    onMount(() => {
-      fetchData();
-    });
-  </script>
-  
-  <div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- Page Header -->
-      <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">News & Updates</h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          Stay updated with the latest news, research, and events from the Department of Cyber Security.
-        </p>
-      </div>
-      
-      {#if loading}
-        <!-- Loading State -->
-        <div class="flex flex-col md:flex-row gap-8">
-          <!-- Category Filter Loading -->
-          <div class="w-full md:w-1/4">
-            <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
-              <div class="h-6 bg-gray-200 rounded w-1/2 mb-4"></div>
-              {#each Array(5) as _}
-                <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
-              {/each}
-            </div>
-          </div>
-          
-          <!-- Posts Loading -->
-          <div class="w-full md:w-3/4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {#each Array(6) as _}
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                  <div class="hidden md:block w-full h-48 bg-gray-200"></div>
-                  <div class="p-6">
-                    <div class="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
-                    <div class="h-6 bg-gray-200 rounded w-full mb-4"></div>
-                    <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                    <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-                  </div>
-                </div>
-              {/each}
-            </div>
-          </div>
-        </div>
-      {:else if error}
-        <!-- Error State -->
-        <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <h2 class="text-xl font-semibold text-red-800 mb-2">Error Loading Posts</h2>
-          <p class="text-red-600 mb-4">{error}</p>
-          <button 
-            on:click={fetchData}
-            class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Try Again
+  import { onMount } from 'svelte';
+  import { api } from '../config.js';
+  import { formatDate } from '../utils/format.js';
+  import { router } from '../router.js';
+
+  let posts = [], loading = true, error = null;
+  let page = 1, totalPages = 1;
+  let category = '';
+  let categories = [];
+
+  async function load() {
+    loading = true; error = null;
+    try {
+      const q = new URLSearchParams({ page: String(page), limit: '9' });
+      if (category) q.set('category', category);
+      const res = await fetch(api(`/posts?${q}`));
+      if (!res.ok) throw new Error('Failed to load posts');
+      const json = await res.json();
+      posts = json.data ?? [];
+      totalPages = json.pagination?.total_pages ?? 1;
+    } catch (e) { error = e.message; posts = []; }
+    finally { loading = false; }
+  }
+
+  async function loadCategories() {
+    try {
+      const res = await fetch(api('/posts?limit=50'));
+      if (!res.ok) return;
+      const json = await res.json();
+      categories = [...new Set((json.data ?? []).map(p => p.category).filter(Boolean))];
+    } catch {}
+  }
+
+  function setCategory(c) { category = c; page = 1; load(); }
+  function setPage(p) { page = p; load(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+  onMount(() => { load(); loadCategories(); });
+</script>
+
+<section class="bg-gradient-to-br from-[#4B338C] to-purple-900 text-white py-20 px-4">
+  <div class="max-w-4xl mx-auto text-center">
+    <div class="text-xs uppercase tracking-[0.3em] text-purple-300 mb-4">Newsroom</div>
+    <h1 class="text-4xl md:text-5xl font-bold mb-3">News & Updates</h1>
+    <p class="text-lg text-purple-200">Stories, research, and events from our department.</p>
+  </div>
+</section>
+
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    {#if categories.length > 0}
+      <div class="flex flex-wrap justify-center gap-2 mb-10">
+        <button on:click={() => setCategory('')}
+                class="px-4 py-2 rounded-full text-sm transition-colors {category === '' ? 'bg-purple-600 text-white' : 'bg-white text-gray-700 hover:bg-purple-100'}">
+          All
+        </button>
+        {#each categories as c}
+          <button on:click={() => setCategory(c)}
+                  class="px-4 py-2 rounded-full text-sm transition-colors {category === c ? 'bg-purple-600 text-white' : 'bg-white text-gray-700 hover:bg-purple-100'}">
+            {c}
           </button>
-        </div>
-      {:else}
-        <!-- Content -->
-        <div class="flex flex-col md:flex-row gap-8">
-          <!-- Category Filter -->
-          <div class="w-full md:w-1/4">
-            <div class="bg-white rounded-lg shadow-sm p-6 mb-6 sm:sticky top-24">
-              <h2 class="text-lg font-semibold text-gray-900 mb-4">Categories</h2>
-              <div class="space-y-2">
-                {#each categories as category}
-                  <button
-                    class={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                      selectedCategory == category.id 
-                        ? 'bg-cyan-100 text-cyan-800 font-medium' 
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                    on:click={() => {
-                      selectedCategory = category.id;
-                      visiblePosts = 6;
-                      loadMoreText = 'Load More Posts';
-                    }}
-                  >
-                    {category.name}
-                    {#if category.id !== 'all' && postsByCategory[category.id]}
-                      <span class="text-gray-500 text-sm ml-1">
-                        ({postsByCategory[category.id].length})
-                      </span>
-                    {/if}
-                  </button>
-                {/each}
-              </div>
-            </div>
-            
-            <!-- Newsletter Signup -->
-            <div class="bg-cyan-50 rounded-lg shadow-sm p-6">
-              <h3 class="text-lg font-semibold text-gray-900 mb-3">Stay Updated</h3>
-              <p class="text-gray-600 text-sm mb-4">
-                Subscribe to our newsletter for the latest updates and news.
-              </p>
-              <form class="space-y-3">
-                <input 
-                  type="email" 
-                  placeholder="Your email address" 
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-sm"
-                  required
-                />
-                <button 
-                  type="submit" 
-                  class="w-full bg-cyan-600 text-white py-2 px-4 rounded-lg hover:bg-cyan-700 transition-colors text-sm"
-                >
-                  Subscribe
-                </button>
-              </form>
+        {/each}
+      </div>
+    {/if}
+
+    {#if loading}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {#each Array(6) as _}
+          <div class="bg-white rounded-xl overflow-hidden shadow-sm animate-pulse">
+            <div class="w-full h-48 bg-gray-200"></div>
+            <div class="p-6 space-y-3">
+              <div class="h-3 bg-gray-200 rounded w-1/3"></div>
+              <div class="h-5 bg-gray-200 rounded w-full"></div>
+              <div class="h-3 bg-gray-200 rounded w-2/3"></div>
             </div>
           </div>
-          
-          <!-- Posts Grid -->
-          <div class="w-full md:w-3/4">
-            {#if getPostsForCategory().length > 0}
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                {#each getPostsForCategory() as post}
-                  <article class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                    <!-- Featured Image - Hidden on mobile -->
-                    {#if post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0]}
-                      <div class="hidden md:block w-full h-48 overflow-hidden">
-                        <img 
-                          src={post._embedded['wp:featuredmedia'][0].source_url} 
-                          alt={post.title.rendered} 
-                          class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                        />
-                      </div>
-                    {:else}
-                      <div class="hidden md:flex w-full h-48 bg-cyan-100 items-center justify-center">
-                        <svg class="w-12 h-12 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                        </svg>
-                      </div>
-                    {/if}
-                    
-                    <div class="p-6">
-                      <div class="flex items-center text-sm text-gray-500 mb-2">
-                        <span>{formatDate(post.date)}</span>
-                        {#if post.categories && post.categories.length > 0}
-                          <span class="mx-2">•</span>
-                          <span>
-                            {#each categories as category}
-                              {#if category.id !== 'all' && post.categories.includes(category.id)}
-                                {category.name}
-                              {/if}
-                            {/each}
-                          </span>
-                        {/if}
-                      </div>
-                      
-                      <h3 class="text-xl font-semibold text-gray-800 mb-2 line-clamp-2" >{@html post.title.rendered}</h3>
-                      
-                      {#if post.excerpt && post.excerpt.rendered}
-                        <div class="text-gray-600 mb-4 line-clamp-3" >{@html post.excerpt.rendered} </div>
-                      {/if}
-                      
-                      <a 
-                        href={`/posts/${post.slug}`} 
-                        on:click|preventDefault={() => router.navigate(`/posts/${post.slug}`)}
-                        class="text-cyan-600 font-medium hover:text-cyan-800 inline-flex items-center"
-                      >
-                        Read more
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                      </a>
-                    </div>
-                  </article>
-                {/each}
-              </div>
-              
-              <!-- Load More Button (only for "All" view) -->
-              {#if selectedCategory === 'all' && postsByCategory.all && visiblePosts < postsByCategory.all.length}
-                <div class="text-center">
-                  <button 
-                    on:click={loadMorePosts}
-                    class="bg-cyan-600 text-white px-6 py-3 rounded-lg hover:bg-cyan-700 transition-colors"
-                  >
-                    {loadMoreText}
-                  </button>
-                </div>
-              {/if}
-            {:else}
-              <!-- No Posts Message -->
-              <div class="bg-white rounded-lg shadow-sm p-8 text-center">
-                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">No posts found</h3>
-                <p class="text-gray-600">
-                  {selectedCategory === 'all' 
-                    ? 'There are no posts available at the moment.' 
-                    : 'There are no posts in this category yet.'}
-                </p>
+        {/each}
+      </div>
+    {:else if error}
+      <p class="text-center text-red-600 py-20">{error}</p>
+    {:else if posts.length === 0}
+      <div class="text-center py-20">
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">No posts found</h3>
+        <p class="text-gray-500">{category ? `No posts in category "${category}".` : 'No posts published yet.'}</p>
+      </div>
+    {:else}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {#each posts as p (p.id)}
+          <article
+            class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col"
+            on:click={() => router.navigate(`/news/${p.slug}`)}
+            role="button" tabindex="0"
+            on:keydown={(e) => e.key === 'Enter' && router.navigate(`/news/${p.slug}`)}
+          >
+            {#if p.cover_image_url}
+              <div class="w-full h-48 overflow-hidden bg-purple-100">
+                <img src={p.cover_image_url} alt={p.title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
               </div>
             {/if}
-          </div>
+            <div class="p-6 flex-1 flex flex-col">
+              <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                {#if p.category}
+                  <span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-semibold uppercase tracking-wide">{p.category}</span>
+                {/if}
+                <span>{formatDate(p.published_at)}</span>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-700 transition-colors">{p.title}</h3>
+              {#if p.excerpt}<p class="text-sm text-gray-600 line-clamp-3 flex-1">{p.excerpt}</p>{/if}
+            </div>
+          </article>
+        {/each}
+      </div>
+
+      {#if totalPages > 1}
+        <div class="flex items-center justify-center gap-3 mt-12">
+          <button disabled={page === 1} on:click={() => setPage(page - 1)}
+                  class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm disabled:opacity-40 hover:bg-purple-50 transition-colors">
+            Previous
+          </button>
+          <span class="text-sm text-gray-600">Page <span class="font-semibold">{page}</span> of {totalPages}</span>
+          <button disabled={page === totalPages} on:click={() => setPage(page + 1)}
+                  class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm disabled:opacity-40 hover:bg-purple-50 transition-colors">
+            Next
+          </button>
         </div>
       {/if}
-    </div>
+    {/if}
   </div>
-  
-  <style>
-    .line-clamp-2 {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    
-    .line-clamp-3 {
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-  </style>
+</div>
+
+<style>
+  .line-clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .line-clamp-3 { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+</style>
