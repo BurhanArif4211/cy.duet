@@ -1,5 +1,5 @@
 <script>
-  import { contactsBySection, contactHref } from '../stores/contacts.js';
+  import { contactsBySection, contactHref } from '../stores/contact.js';
   import { settings } from '../stores/settings.js';
 
   $: ieee = $contactsBySection.IEEE ?? [];
