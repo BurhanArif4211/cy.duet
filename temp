@@ -1,0 +1,139 @@
+# Public API Doc — New Endpoints
+
+Add to the frontend docs:
+
+### `GET /api/site-identity`
+
+```json
+{
+  "site_type": "department",
+  "site_title": "Department of Cyber Security",
+  "site_tagline": "Securing the Digital Future",
+  "site_logo_url": "https://pub-xxxx.r2.dev/branding/logo.webp",
+  "university_name": "Dawood University of Engineering & Technology",
+  "university_logo_url": "https://pub-xxxx.r2.dev/branding/duet-logo.webp",
+  "favicon_url": "https://pub-xxxx.r2.dev/branding/favicon.ico",
+  "primary_color": "#4c1d95",
+  "meta_description": "Cyber Security Department — DUET",
+  "updated_at": "2024-05-15 12:34:56"
+}
+```
+
+Never returns `404`. If not configured, returns minimal defaults so the frontend can still render.
+
+### `GET /api/contacts`
+```json
+[
+  {
+    "icon": "",
+    "id": 11,
+    "label": "site_url",
+    "section": "IEEE",
+    "sort_order": 0,
+    "type": "url",
+    "value": "https://ieee-edusociety.org/"
+  },
+  {
+    "icon": "",
+    "id": 12,
+    "label": "instagram",
+    "section": "IEEE",
+    "sort_order": 0,
+    "type": "url",
+    "value": "https://www.instagram.com//"
+  },
+  {
+    "icon": "",
+    "id": 13,
+    "label": "linkedin",
+    "section": "IEEE",
+    "sort_order": 0,
+    "type": "url",
+    "value": "https://pk.linkedin.com/in"
+  },
+  {
+    "icon": "",
+    "id": 1,
+    "label": "Email",
+    "section": "primary",
+    "sort_order": 0,
+    "type": "email",
+    "value": "cy@duet.edu.pk"
+  },
+  {
+    "icon": "",
+    "id": 2,
+    "label": "phone",
+    "section": "primary",
+    "sort_order": 0,
+    "type": "phone",
+    "value": "+9221111123456"
+  },
+  {
+    "icon": "",
+    "id": 3,
+    "label": "phone_alt",
+    "section": "primary",
+    "sort_order": 0,
+    "type": "phone",
+    "value": "+922199232645"
+  },
+  {
+    "icon": "",
+    "id": 4,
+    "label": "instagram",
+    "section": "primary",
+    "sort_order": 0,
+    "type": "url",
+    "value": "https://instagram.com/duetcyber"
+  },
+  {
+    "icon": "",
+    "id": 5,
+    "label": "linkedin",
+    "section": "primary",
+    "sort_order": 0,
+    "type": "url",
+    "value": "https://linkedin.com/company/duetcyber"
+  },
+  {
+    "icon": "",
+    "id": 8,
+    "label": "WhatsApp",
+    "section": "primary",
+    "sort_order": 0,
+    "type": "whatsapp",
+    "value": "https://wa.me/923001234567"
+  },
+  {
+    "icon": "",
+    "id": 9,
+    "label": "youtube",
+    "section": "primary",
+    "sort_order": 0,
+    "type": "url",
+    "value": "https://youtube.com/@duetcyber"
+  }
+]
+```
+
+### Note: `GET /api/contacts?section=IEEE` sections can be chosen individually
+
+### `GET /api/nav`
+
+Returns the raw array as-is stored on the backedn and is customizable by the admin:
+
+```json
+[
+  { "text": "Home", "href": "/home" },
+  { "text": "About", "href": "/about" },
+  { "text": "Faculty", "href": "/faculty" },
+  { "text": "Societies", "id": "societies", "children": [
+    { "text": "IEEE Education Society", "href": "/societies/ieee" }
+  ]},
+  { "text": "News", "href": "/news" },
+  { "text": "Publications", "href": "/publications" },
+  { "text": "SEA DB", "href": "/seadb", "external": true },
+  { "text": "Contact", "href": "/contact" }
+]
+```

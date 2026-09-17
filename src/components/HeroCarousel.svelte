@@ -54,20 +54,10 @@
 </script>
 
 {#if slides.length === 0}
-	<section
-		class="relative w-full h-[60vh] md:h-[80vh] bg-gradient-to-br from-purple-800 via-[#4B338C] to-purple-900 flex items-center justify-center text-white"
-	>
-		<div class="text-center px-4">
-			<div class="text-xs uppercase tracking-[0.3em] text-purple-300 mb-4">
-				Department of
-			</div>
-			<h1 class="text-4xl md:text-6xl font-bold mb-3">Cyber Security</h1>
-			<p class="text-lg md:text-xl text-purple-200 italic">
-				the university of relevance
-			</p>
-		</div>
-	</section>
-{:else}
+	<div class="flex justify-center items-center min-h-[60vh]">
+        <div class="animate-spin rounded-full h-10 w-10 border-2 border-purple-600 border-t-transparent"></div>
+      </div>
+	{:else}
 	<section
 		class="relative w-full h-[60vh] md:h-[80vh] overflow-hidden bg-black"
 	>
