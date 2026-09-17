@@ -3,7 +3,7 @@
 	import { api } from "../config.js";
 	import { settings } from "../stores/settings.js";
 	import HodSection from "../sections/HodSection.svelte";
-	import { STATIC } from "../config.js";
+	import { identity } from "../stores/identity.js";
 	import MultiLineTypewriter from "../components/typo/MultiTypeWriter.svelte";
 
 	let hod = null;
@@ -27,7 +27,7 @@
 		<h1 class="text-4xl md:text-5xl font-bold mb-4">
 			Department of Cyber Security
 		</h1>
-		<p class="text-lg text-purple-200 italic">{STATIC.tagline}</p>
+		<p class="text-lg text-purple-200 italic">{$identity.site_tagline}</p>
 	</div>
 </section>
 
