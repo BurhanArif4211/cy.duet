@@ -43,7 +43,7 @@
 		<div class="relative z-10 flex flex-col items-center gap-4">
 			{#if $identity.site_logo_url}
 				<img
-					src={$identity.site_logo_url}
+					src="/favicon.ico"
 					alt={"loading Please Wait..."}
 					class="w-24 h-24 md:w-32 md:h-32 sm:w-52 sm:h-52 object-contain drop-shadow-lg"
 					on:error={(e) => (e.currentTarget.style.display = "none")}
